@@ -1,17 +1,26 @@
 import mysql.connector
 
-def connection():
+def connection(dataBase): #Connect to the database
     db = mysql.connector.connect(
         host="localhost",
         user="root",
-        password="password",
-        database="pe"
+        database=dataBase
     )
 
+    print("Connected")
     return db
 
-db = connection()
+def dataToPe(db, yeargroup):
+    q = "insert into pe.relationships select p.pid, t.tid, t.classID, NULL from data.classteacher t inner join data.classpupil p on t.classID=p.classID where t.yeargroup=%s;"
+    cursor = db.cursor()
+    
+    cursor.execute(q, (yeargroup, ))
+    print("Executed")
+
+    db.commit()
+
+db = connection("pe")
+
+dataToPe(db, 12)
 
 
-
-q = "insert into pe.relationships select p.pid, t.tid, t.classID, NULL from classteacher t inner join classpupil p on t.classID=p.classID where t.yeargroup=12;"
