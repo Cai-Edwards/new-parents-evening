@@ -1,6 +1,9 @@
 '''List manipulations. eg) students --> teachers'''
 from database import get_ids
 
+def dictToList(dict):
+    return [dict[x] for x in dict]
+
 def remove_excess(timetable):
     '''Removes all zeros at the end of a value for every key'''
 
@@ -35,3 +38,23 @@ def swap(db, timetable, group):
             slot += 1
     
     return remove_excess(new)
+
+def convert_to_slots(timetable):
+    '''Takes a timetable and converts all appointments into slot times.
+    
+    This will forget who the appointment is with.'''
+
+    new = {}
+
+    for person in timetable:
+        new[person] = []
+
+        slot = 1
+
+        for time in timetable[person]:
+            if time != 0:
+                new[person].append(slot)
+            
+            slot += 1
+
+    return new
