@@ -1,7 +1,6 @@
 '''All functions relating to accessing the databases'''
 import mysql.connector
 
-
 def connection(dataBase):
     '''Connect to the database entered'''
 
@@ -15,7 +14,7 @@ def connection(dataBase):
     return db
 
 
-def dataToPe(db, yeargroup): 
+def data_to_pe(db, yeargroup): 
     '''Takes the data from the data database and moves a yeargroup to the pe database.
     Year group from 6-13'''
 
@@ -27,11 +26,21 @@ def dataToPe(db, yeargroup):
     return "Complete"
 
 
-def clear_pe(db): 
+def clear_relationships(db): 
     '''Truncates the relationships table in database'''
 
     cursor = db.cursor()
     q1 = "truncate table relationships"
+    cursor.execute(q1)
+    db.commit()
+
+    return "Complete"
+
+def clear_analysis(db): 
+    '''Truncates the analysis table in database'''
+
+    cursor = db.cursor()
+    q1 = "truncate table analysis"
     cursor.execute(q1)
     db.commit()
 
@@ -75,4 +84,21 @@ def get_ids(db, group):
         return "Not a valid input"
 
     return [x[0] for x in cursor.fetchall()] #Returns it as a list.
+
+def upload_analysis(db, analysis):
+    
+    cursor = db.cursor()
+
+    for person in range(len(analysis["order"])):
+
+        q1 = "INSERT INTO analysis (pid, earliest, latest, difference, average_gap, min_gap, max_gap) VALUES ({}, {}, {}, {}, {}, {}, {})".format(analysis["order"][person],
+        analysis["all_earliest"][person], analysis["all_latest"][person],
+        analysis["all_difference"][person], analysis["all_average_gap"][person],
+        analysis["all_min_gap"][person], analysis["all_max_gap"][person])
+
+        cursor.execute(q1)
+
+    db.commit()
+
+    return "Done"
 
