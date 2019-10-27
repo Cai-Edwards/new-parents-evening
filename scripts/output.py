@@ -1,7 +1,12 @@
 import csv
 import matplotlib.pyplot as plt
+from list_manipulation import dictToList
 
 def write(timetable, file):
+    '''Write a timetable to a csv file
+    
+    timetable: dict
+    file: filename/path'''
 
     timetable = dictToList(timetable)
 
@@ -37,41 +42,49 @@ def visualise(analysis):
     The average gap was: {}
     The average smallest gap was: {}
     The average largest gap was: {}
+
+    TOTALS
+    The total amount of slots at parents evening is: {}
     """.format(str(analysis['earliest_start']), str(analysis['latest_start']),
     str(analysis['earliest_end']), str(analysis['latest_end']),
     str(analysis['smallest_difference']), str(analysis['largest_difference']),
     str(analysis['smallest_average_gap']), str(analysis['largest_average_gap']),
     str(analysis['average_earliest']), str(analysis['average_latest']),
     str(analysis['average_difference']), str(analysis['average_gap']),
-    str(analysis['average_min_gap']), str(analysis['average_max_gap'])))
+    str(analysis['average_min_gap']), str(analysis['average_max_gap']),
+    str(analysis['total_time'])))
 
     fig, axs = plt.subplots(2, 2)
 
     axs[0,0].plot(analysis['all_earliest'])
     axs[0,0].set_ylabel("Earliest slot")
-    axs[0,0].set_xlabel("People")
+    axs[0,0].set_xlabel("Person")
 
     axs[0,1].plot(analysis['all_latest'])
     axs[0,1].set_ylabel("Latest slot")
-    axs[0,1].set_xlabel("People")
+    axs[0,1].set_xlabel("Person")
 
     axs[1,0].plot(analysis['all_difference'])
     axs[1,0].set_ylabel("Time spent at parents evening")
-    axs[1,0].set_xlabel("People")
+    axs[1,0].set_xlabel("Person")
 
     axs[1,1].plot(analysis['all_average_gap'])
     axs[1,1].set_ylabel("The average gap length")
-    axs[1,1].set_xlabel("People")
+    axs[1,1].set_xlabel("Person")
 
-    fig2, axs2 = plt.subplots(1, 2)
+    fig2, axs2 = plt.subplots(2, 2)
 
-    axs2[0].plot(analysis['all_min_gap'])
-    axs2[0].set_ylabel("Minimum gap length")
-    axs2[0].set_xlabel("People")
+    axs2[0,0].plot(analysis['all_min_gap'])
+    axs2[0,0].set_ylabel("Minimum gap length")
+    axs2[0,0].set_xlabel("Person")
 
-    axs2[1].plot(analysis['all_max_gap'])
-    axs2[1].set_ylabel("Maximum gap length")
-    axs2[1].set_xlabel("People")
+    axs2[0,1].plot(analysis['all_max_gap'])
+    axs2[0,1].set_ylabel("Maximum gap length")
+    axs2[0,1].set_xlabel("Person")
+
+    axs2[1,0].plot(analysis['change_average_difference'])
+    axs2[1,0].set_ylabel("The average difference over time")
+    axs2[1,0].set_xlabel("Number of people used.")
 
     plt.show()
 

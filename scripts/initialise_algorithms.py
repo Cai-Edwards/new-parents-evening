@@ -4,12 +4,11 @@ from database import *
 from output import *
 from list_manipulation import *
 
-def first_fit(db, group):
-    '''First fit algorithm. Pulls data from db provided. Can be done to teachers or pupils
+def first_fit(db, group, appointments):
+    '''First fit algorithm. The appointment data needs to be provided. Can be done to teachers or pupils
     
     Returns the opposite groups timetable
     '''
-    appointments = get_appointments(db, group)
 
     timetable = {}
 
@@ -33,4 +32,5 @@ def first_fit(db, group):
                     slot += 1
 
     return remove_excess(timetable)
+
 

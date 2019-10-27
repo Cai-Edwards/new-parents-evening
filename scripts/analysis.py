@@ -4,6 +4,10 @@ from list_manipulation import convert_to_slots
 import numpy
 
 def analyse(timetable):
+    '''Analysis function. slotted timetable input
+    
+    {3:[0, 1, ... , 3], ... }'''
+
 
     slots_timetable = convert_to_slots(timetable)
 
@@ -15,6 +19,7 @@ def analyse(timetable):
     all_min_gap = []
     all_max_gap = []
     all_all_gaps = []
+    change_average_difference = []
 
     for person in slots_timetable:
         order.append(person)
@@ -27,6 +32,8 @@ def analyse(timetable):
         all_min_gap.append(data[4])
         all_max_gap.append(data[5])
         all_all_gaps.append(data[6])
+
+        change_average_difference.append(sum(all_difference)/len(order))
     
     average_earliest = float(numpy.average(all_earliest))
     average_latest = float(numpy.average(all_latest))
@@ -46,6 +53,8 @@ def analyse(timetable):
 
     smallest_average_gap = min(all_average_gap)
     largest_average_gap = max(all_average_gap)
+
+    total_time = sum(all_difference)
 
     return {
         "order":order,
@@ -69,10 +78,15 @@ def analyse(timetable):
         "smallest_difference":smallest_difference,
         "largest_difference":largest_difference,
         "smallest_average_gap":smallest_average_gap,
-        "largest_average_gap":largest_average_gap
+        "largest_average_gap":largest_average_gap,
+        "change_average_difference":change_average_difference,
+        "total_time":total_time
     }
 
 def individual_analysis(individual):
+    '''Perform analysis for an individual person
+    
+    [0, 12, 0, 345, 0, 34, 0, 0 , 3]'''
 
     earliest = min(individual)
     latest = max(individual)
