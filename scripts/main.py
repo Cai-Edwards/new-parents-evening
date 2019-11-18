@@ -6,6 +6,16 @@ from dict_manipulation import *
 
 db = connection("pe")
 
-visualise(analyse(first_fit(db, "p", order_by_longest(get_appointments(db, "p"), True))))
+algo = (first_few(db, "t", order_by_longest(get_appointments(db, "p"))))
+
+
+update_slots(db, algo, "tid")
+visualise(analyse(db, algo))
+write(algo, "f1.csv")
+algo = swap(db, algo, "p")
+visualise(analyse(db, algo))
+write(algo, "f2.csv")
+
+
 
 print("hi")

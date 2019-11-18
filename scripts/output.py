@@ -43,6 +43,11 @@ def visualise(analysis):
     The average smallest gap was: {}
     The average largest gap was: {}
 
+    BOUNDS
+    The earliest possible end is: {}
+    The lowest amount of slots possible is: {}
+
+
     TOTALS
     The total amount of slots at parents evening is: {}
     """.format(str(analysis['earliest_start']), str(analysis['latest_start']),
@@ -52,6 +57,7 @@ def visualise(analysis):
     str(analysis['average_earliest']), str(analysis['average_latest']),
     str(analysis['average_difference']), str(analysis['average_gap']),
     str(analysis['average_min_gap']), str(analysis['average_max_gap']),
+    str(analysis['minimum_duration']), str(analysis['minimum_slots']),
     str(analysis['total_time'])))
 
     fig, axs = plt.subplots(2, 2)
@@ -85,6 +91,10 @@ def visualise(analysis):
     axs2[1,0].plot(analysis['change_average_difference'])
     axs2[1,0].set_ylabel("The average difference over time")
     axs2[1,0].set_xlabel("Number of people used.")
+
+    axs2[1,1].plot(analysis['slot_distribution'])
+    axs2[1,1].set_ylabel("The amount of slots")
+    axs2[1,1].set_xlabel("Slot number")
 
     plt.show()
 
