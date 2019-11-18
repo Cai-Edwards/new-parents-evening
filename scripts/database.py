@@ -18,7 +18,7 @@ def data_to_pe(db, yeargroup):
     '''Takes the data from the data database and moves a yeargroup to the pe database.
     Year group from 6-13'''
 
-    q = "insert into pe.relationships select p.pid, t.tid, t.classID, NULL from data.classteacher t inner join data.classpupil p on t.classID=p.classID where t.yeargroup=%s;"
+    q = "insert ignore into pe.relationships select p.pid, t.tid, t.classID, NULL from data.classteacher t inner join data.classpupil p on t.classID=p.classID where t.yeargroup=%s;"
     cursor = db.cursor()
     cursor.execute(q, (yeargroup, ))
     db.commit()
@@ -36,6 +36,13 @@ def clear_relationships(db):
 
     return "Complete"
 
+def clear_slots(db):
+    '''Clear the slots field'''
+    cursor = db.cursor()
+    q1 = "UPDATE relationships SET slot = NULL"
+    cursor.execute(q1)
+    db.commit()
+
 def clear_analysis(db): 
     '''Truncates the analysis table in database'''
 
@@ -46,13 +53,15 @@ def clear_analysis(db):
 
     return "Complete"
 
+def get_timetable(db, group):
+    '''Gets the appointment timetable TODO''' 
 
 def get_appointments(db, group):
     '''Gets all the appointments each pupil/teacher needs to go to.'''
 
     cursor = db.cursor()
 
-    q1 = "SELECT {}, group_concat({}) from relationships group by {}"
+    q1 = "SELECT {}, group_concat({}) from relationships group by {}" 
 
     if group[0].lower() == "p":
         cursor.execute(q1.format("pid", "tid", "pid"))
@@ -67,7 +76,6 @@ def get_appointments(db, group):
         appointments[int(i[0])] = list(map(int, i[1].split(","))) #Converts it all to ints and makes it a list, with a key of the id.
 
     return appointments
-
 
 def get_ids(db, group):
     '''Pulls every UNIQUE id from relationships.'''
@@ -86,6 +94,8 @@ def get_ids(db, group):
     return [x[0] for x in cursor.fetchall()] #Returns it as a list.
 
 def upload_analysis(db, analysis):
+
+    clear_slots(db)
     
     cursor = db.cursor()
 
@@ -102,3 +112,68 @@ def upload_analysis(db, analysis):
 
     return "Done"
 
+def remove_subject(db, subject_name):
+    '''Removes all instances of a classID with a subject=subject_name in relationships
+    
+    Takes db and the subject name'''
+
+    q = "DELETE FROM relationships WHERE classID IN (SELECT classID FROM data.setsubject WHERE subject=(SELECT d.subject FROM data.subjectname d WHERE subjectName='{}'));".format(
+        subject_name
+    )
+
+    cursor = db.cursor()
+    cursor.execute(q)
+
+    db.commit()
+
+    return "Done"
+
+def remove_general(db):
+    '''Removes all subjects generally not in parents evening'''
+
+    remove_subject(db, "Personal Development")
+    remove_subject(db, "Private Study")
+    remove_subject(db, "Physical Education")
+    remove_subject(db, "Diploma")
+    remove_subject(db, "Games")
+    remove_subject(db, "Swimming")
+    remove_subject(db, "EPQ")
+    remove_subject(db, "English Support")
+    remove_subject(db, "Maths Support")
+    remove_subject(db, "Toilet Duty")
+    remove_subject(db, "Learning Support")
+    remove_subject(db, "Private Study Lib")
+    remove_subject(db, "Tutor Commendation")
+
+    return "Done"
+
+def update_slots(db, timetable, group):
+
+    cursor = db.cursor()
+    cursor2 = db.cursor()
+
+    if group == "pid": other = 1
+    elif group == "tid": other = 0
+    else: return "Incorrect group"
+
+    for i in timetable:
+        q = "SELECT pid, tid, classID from relationships where {}={}".format(group, i)
+        cursor.execute(q)
+
+        teacher_info = cursor.fetchall()
+
+        if teacher_info is None:
+            return "Wrong Group"
+            raise AttributeError
+
+        for k in teacher_info:
+            slot = timetable[i].index(k[other]) + 1
+
+            q2 = "UPDATE relationships SET slot = {} WHERE (pid={} and tid={} and classID={})".format(slot, k[0], k[1], k[2])
+            cursor2.execute(q2)
+    
+    db.commit()
+
+    return "Done"
+
+print("Loaded database.py")
