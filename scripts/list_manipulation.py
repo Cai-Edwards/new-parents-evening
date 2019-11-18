@@ -26,7 +26,7 @@ def swap(db, timetable, group):
     new = {}
 
     for person in get_ids(db, group[0].lower()):
-        new[person] = [0 for x in range(100)] #Fills their ids with 0's
+        new[person] = [0 for x in range(200)] #Fills their ids with 0's
 
     for original in timetable:
         slot = 0
