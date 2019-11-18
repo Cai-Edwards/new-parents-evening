@@ -3,11 +3,42 @@
 from list_manipulation import convert_to_slots
 import numpy
 
-def analyse(timetable):
+def find_bounds(timetable):
+    minimum_slots = 0
+    num_persons = 0
+    minimum_latest = 1000
+    minimum_duration = 0
+
+    for p in timetable:
+
+        person = [x for x in timetable[p] if x != 0]
+
+        if len(person) < minimum_latest: minimum_latest = len(person)
+        if len(person) > minimum_duration: minimum_duration = len(person)
+        num_persons += 1
+
+        minimum_slots += len(person)
+
+    maximum_slots = minimum_slots * num_persons
+    
+    earliest_slot = 1
+    latest_earliest = maximum_slots - minimum_latest
+
+    return minimum_slots, minimum_duration, maximum_slots, minimum_latest, earliest_slot, latest_earliest
+
+def slot_analysis(db):
+    cursor = db.cursor()
+    
+    cursor.execute("select slot, count(slot) from relationships group by slot;")
+    slot_distribution = [x[1] for x in cursor.fetchall()]
+    
+    return slot_distribution
+
+def analyse(db, timetable):
+
     '''Analysis function. slotted timetable input
     
     {3:[0, 1, ... , 3], ... }'''
-
 
     slots_timetable = convert_to_slots(timetable)
 
@@ -56,6 +87,10 @@ def analyse(timetable):
 
     total_time = sum(all_difference)
 
+    minimum_slots, minimum_duration, maximum_slots, minimum_latest, earliest_slot, latest_earliest = find_bounds(timetable)
+
+    slot_distribution = slot_analysis(db)
+
     return {
         "order":order,
         "all_earliest":all_earliest,
@@ -80,6 +115,13 @@ def analyse(timetable):
         "smallest_average_gap":smallest_average_gap,
         "largest_average_gap":largest_average_gap,
         "change_average_difference":change_average_difference,
+        "minimum_slots":minimum_slots,
+        "minimum_duration":minimum_duration,
+        "maximum_slots":maximum_slots,
+        "minimum_latest":minimum_latest,
+        "earliest_slot":earliest_slot,
+        "latest_earliest":latest_earliest,
+        "slot_distribution":slot_distribution,
         "total_time":total_time
     }
 
