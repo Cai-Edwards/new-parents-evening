@@ -131,19 +131,12 @@ def remove_subject(db, subject_name):
 def remove_general(db):
     '''Removes all subjects generally not in parents evening'''
 
-    remove_subject(db, "Personal Development")
-    remove_subject(db, "Private Study")
-    remove_subject(db, "Physical Education")
-    remove_subject(db, "Diploma")
-    remove_subject(db, "Games")
-    remove_subject(db, "Swimming")
-    remove_subject(db, "EPQ")
-    remove_subject(db, "English Support")
-    remove_subject(db, "Maths Support")
-    remove_subject(db, "Toilet Duty")
-    remove_subject(db, "Learning Support")
-    remove_subject(db, "Private Study Lib")
-    remove_subject(db, "Tutor Commendation")
+    subjects = ["Personal Development", "Private Study", "Physical Education", "Diploma",
+    "Games", "Swimming", "EPQ", "English Support", "Maths Support", "Toilet Duty", 
+    "Learning Support", "Private Study Lib", "Tutor Commendation"]
+
+    for i in subjects:
+        remove_subject(db, i)
 
     return "Done"
 
@@ -161,10 +154,6 @@ def update_slots(db, timetable, group):
         cursor.execute(q)
 
         teacher_info = cursor.fetchall()
-
-        if teacher_info is None:
-            return "Wrong Group"
-            raise AttributeError
 
         for k in teacher_info:
             slot = timetable[i].index(k[other]) + 1
