@@ -140,6 +140,9 @@ def individual_analysis(individual):
         gap = individual[slot+1] - individual[slot] - 1
         all_gaps.append(gap)
 
+    if len(individual) <= 1:
+        all_gaps.append(0)
+
     average_gap = float(numpy.average(all_gaps))
     min_gap = min(all_gaps)
     max_gap = max(all_gaps)
