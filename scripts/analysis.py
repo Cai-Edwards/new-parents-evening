@@ -70,8 +70,12 @@ def overall(timetable):
     average_gaps = []
     sd_gaps = []
 
-    names = ['all_earliest', 'all_latest', 'all_median', 'all_difference', 
-            'smallest_gaps', 'longest_gaps', 'average_gaps', 'sd_gaps']
+    names = ['data_earliest', 'data_latest', 'data_median', 'data_difference', 
+            'data_smallest_gaps', 'data_longest_gaps', 'data_average_gaps',
+            'data_sd_gaps']
+    
+    all_names = ["all_earliest", "all_latest", "all_median", "all_difference",
+                "smallest_gaps", "longest_gaps", "average_gaps", "sd_gaps"]
 
     stats = [all_earliest, all_latest, all_median, all_difference,
             smallest_gaps, longest_gaps, average_gaps, sd_gaps]
@@ -87,6 +91,9 @@ def overall(timetable):
     values = {}
     values['slot_distribution'] = [len([timetable[x][i] for x in timetable if i < len(timetable[x])
     and timetable[x][i] != 0]) for i, e in enumerate(timetable[max(timetable, key=lambda x: len(timetable[x]))])]
+
+    for name, data in zip(all_names, stats):
+        values[name] = data
 
     for data, name in zip(stats, names):
         values[name] = [min(data), max(data), 
