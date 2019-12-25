@@ -164,7 +164,7 @@ def shake_first_fit(db, group, appointments, init=50, increase = 5):
 def ordered(db, group, appointments, init=50, increase = 5, longest=True):
     '''Order by longest/shortest pupil and teacher'''  
 
-    longest_person = {x:appointments[x] for x in sorted(appointments, key=lambda x: len(appointments[x]), reverse=True)}
+    longest_person = {x:appointments[x] for x in sorted(appointments, key=lambda x: len(appointments[x]), reverse=longest)}
 
     cursor = db.cursor()
 
@@ -181,7 +181,7 @@ def ordered(db, group, appointments, init=50, increase = 5, longest=True):
 
     for person in longest_person:
         values = [(ids, lengths[ids]) for ids in longest_person[person]]
-        longest_person[person] = [x[0] for x in sorted(values, key=lambda k: k[1], reverse=True)]
+        longest_person[person] = [x[0] for x in sorted(values, key=lambda k: k[1], reverse=longest)]
 
     timetable = {}
 
