@@ -6,6 +6,11 @@ def dict_shuffle(dictionary):
     random.shuffle(new)
     return dict(new)
 
+def dict_to_str(dictionary):
+    for x in dictionary:
+        dictionary[x] = str(dictionary[x])
+    return dictionary
+
 
 def order_by_longest(dictionary, *args):
     '''Add arg = True for reverse sort'''
