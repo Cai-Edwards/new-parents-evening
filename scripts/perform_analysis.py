@@ -6,7 +6,7 @@ import json
 
 def check(db, algorithm):
 
-    first = (("t", "p"), ("p", "t"))
+    first = (("teacher", "pupil"), ("pupil", "teacher"))
     order = (True, False)
 
     values = {}
@@ -19,7 +19,13 @@ def check(db, algorithm):
 
             appointments = order_by_longest(get_appointments(db, option[1]), o)
             result = algorithm(db, option[0], appointments)
-            values[option[0] + str(o)] = dict_to_str(analysis(result))
+
+            if option[0] == "teacher":
+                values["TeachersFor" + option[0] + str(o)] = dict_to_str(analysis(result))
+                values["PupilsFor" + option[0] + str(o)] = dict_to_str(analysis(swap(db, result, "p")))
+            else:
+                values["TeachersFor" + option[0] + str(o)] = dict_to_str(analysis(swap(db, result, "t")))
+                values["PupilsFor" + option[0] + str(o)] = dict_to_str(analysis(result))
     
     return values
 
@@ -36,6 +42,6 @@ for i, algo in enumerate(txt):
     values[algo] = check(db, algos[i])
 
 with open("init_analysis.json", "w") as file:
-    json.dump(values, file, ensure_ascii=False, indent=2)
+    json.dump(values, file, ensure_ascii=False, indent=4)
 
 print("hi")
