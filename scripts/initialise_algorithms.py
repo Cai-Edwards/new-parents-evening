@@ -81,36 +81,37 @@ def first_few(db, group, appointments, init=30, increment=5, increase=3):
     for person in get_ids(db, group[0].lower()):
         timetable[person] = [0 for x in range(init)]
 
-    not_full = True
-    current = 0
 
-    while not_full == True:
+    while len(appointments) != 0:
 
+        to_remove = []
         for person in appointments:
 
-            if len(appointments[person][current:current+increment]) == 0:
-                not_full = False
-                pass
-            else:
-                not_full = True
+            look = appointments[person][0:increment]
 
-                for relationships in appointments[person][current:current+increment]:
-                    slot = 0
+            for relationships in look:
+                slot = 0
 
-                    while True:
-                        if slot >= len(timetable[relationships]):
-                            timetable[relationships].extend([0,]*increase)
+                while True:
+                    if slot >= len(timetable[relationships]):
+                        timetable[relationships].extend([0,]*increase)
+                    
+                    if timetable[relationships][slot] == 0 and slot not in slots_taken[person]:
+                        timetable[relationships][slot] = person
+                        slots_taken[person].append(slot)
+                        break
 
-                        if timetable[relationships][slot] == 0 and slot not in slots_taken[person]:
-                            timetable[relationships][slot] = person
-                            slots_taken[person].append(slot)
-                            break
-                        
-                        else:
-                            slot += 1
+                    else:
+                        slot += 1
 
+            del appointments[person][0:increment]
+
+            if len(appointments[person]) == 0:
+                to_remove.append(person)
         
-        current += increment
+        if len(to_remove) != 0:
+            for i in to_remove:
+                del appointments[i]    
 
     return remove_excess(timetable)
 
