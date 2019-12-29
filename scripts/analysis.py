@@ -3,16 +3,30 @@ import math
 import statistics
 
 def analysis(timetable):
+
     o = overall(timetable)
+    s = score(o)
     b = bounds(timetable)
 
     o.update(b)
+    o.update(s)
 
     return o
+
+
+def score(overall):
+
+    score = (overall['data_longest_gaps'][0]*-1 + overall['data_longest_gaps'][1]*-2 + overall['data_longest_gaps'][2]*-5 + 
+    overall['data_difference'][0]*1 + overall['data_difference'][2]*5 +
+    overall['data_earliest'][1]*-3 + overall['data_sd_gaps'][1]*-10)*-1
+
+    return {"score":score}
+
 
 def individual(time):
 
     earliest = time.index(next(slot for slot in time if slot != 0)) + 1
+
     latest = len(time)
     difference = latest - earliest
     median = math.floor((difference + 1)/2)
@@ -47,6 +61,10 @@ def individual(time):
     }
 
 def bounds(timetable):
+
+    if all(v == 0 for v in timetable) == True:
+        return {}
+
     data = {}
     data['minimum_length'] = 0
 
@@ -60,6 +78,9 @@ def bounds(timetable):
 
 
 def overall(timetable):
+
+    if all(v == 0 for v in timetable) == True:
+        return {}
     
     all_earliest = []
     all_latest = []
