@@ -8,7 +8,7 @@ db = connection("pe")
 
 clear_slots(db)
 
-algo = (shake_first_fit(db, "t", order_by_longest(get_appointments(db, "p"))))
+algo = (first_few(db, "t", order_by_longest(get_appointments(db, "p"), True)))
 
 visualise(analysis(algo))
 

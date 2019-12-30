@@ -162,53 +162,6 @@ def shake_first_fit(db, group, appointments, init=50, increase = 5):
 
     return remove_excess(timetable)
 
-def ordered(db, group, appointments, init=50, increase = 5, longest=True):
-    '''Order by longest/shortest pupil and teacher'''  
-
-    longest_person = {x:appointments[x] for x in sorted(appointments, key=lambda x: len(appointments[x]), reverse=longest)}
-
-    cursor = db.cursor()
-
-    q1 = "SELECT {}, count({}) from relationships group by {} order by COUNT({}) DESC" 
-
-    if group[0].lower() == "p":
-        cursor.execute(q1.format("pid", "tid", "pid", "tid"))
-    elif group[0].lower() == "t":
-        cursor.execute(q1.format("tid", "pid", "tid", "pid"))
-    else:
-        return "Not a valid input"
-    
-    lengths = dict(cursor.fetchall())
-
-    for person in longest_person:
-        values = [(ids, lengths[ids]) for ids in longest_person[person]]
-        longest_person[person] = [x[0] for x in sorted(values, key=lambda k: k[1], reverse=longest)]
-
-    timetable = {}
-
-    for person in get_ids(db, group[0].lower()):
-        timetable[person] = [0 for x in range(init)] #Fills their ids with 0's
-
-    for person in longest_person:
-        slots_taken = []
-
-        for relationships in longest_person[person]:
-            slot = 0
-
-            while True:
-                if len(timetable[relationships]) <= slot:
-                    timetable[relationships].extend([0,] * increase)
-
-                if timetable[relationships][slot] == 0 and slot not in slots_taken:
-                    timetable[relationships][slot] = person
-                    slots_taken.append(slot)
-                    break
-
-                else:
-                    slot += 1    
-
-    return remove_excess(timetable)
-
 def variable_first_fit(db, group, appointments, init=50, increase = 5):
     '''First fit starting at random positions'''
     

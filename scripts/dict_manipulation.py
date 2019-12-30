@@ -11,17 +11,32 @@ def dict_to_str(dictionary):
         dictionary[x] = str(dictionary[x])
     return dictionary
 
+def order_by_double(db, group, appointments, longest=True):
 
-def order_by_longest(dictionary, *args):
-    '''Add arg = True for reverse sort'''
+    schedule = {x:appointments[x] for x in sorted(appointments, key=lambda x: len(appointments[x]), reverse=longest)}
 
-    d = {}
-    for k in dictionary:
-        d[k] = len(dictionary[k])
+    cursor = db.cursor()
 
-    new = {}
-    for i in sorted(d, key=d.get, reverse=(lambda a: True if len(a) > 0 and a[0] == True else False)(args)):        
-        new[i] = dictionary[i]
+    q1 = "SELECT {}, count({}) from relationships group by {} order by COUNT({}) DESC" 
 
-    return new
+    if group[0].lower() == "p":
+        cursor.execute(q1.format("pid", "tid", "pid", "tid"))
+    elif group[0].lower() == "t":
+        cursor.execute(q1.format("tid", "pid", "tid", "pid"))
+    else:
+        return "Not a valid input"
+    
+    lengths = dict(cursor.fetchall())
+
+    for person in schedule:
+        values = [(ids, lengths[ids]) for ids in schedule[person]]
+        schedule[person] = [x[0] for x in sorted(values, key=lambda k: k[1], reverse=longest)]
+    
+    return schedule
+
+def order_by_length(d, longest=True):
+    '''longest=False for ordering by shortest'''
+    return {x:d[x] for x in sorted(d, key=lambda a: len(d[a]), reverse=longest)}
+
+    
 

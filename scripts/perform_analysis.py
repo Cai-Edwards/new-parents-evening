@@ -7,38 +7,48 @@ import json
 def check(db, algorithm):
 
     first = (("teacher", "pupil"), ("pupil", "teacher"))
+    sort_algos = (order_by_length, order_by_double)
+    txt_sort = ("BaseSorted", "DoubleSorted")
     order = (True, False)
 
     values = {}
 
     for option in first:
 
-        for o in order:
+        for i, sort in enumerate(sort_algos):
 
-            clear_slots(db)
+            for o in order:
 
-            appointments = order_by_longest(get_appointments(db, option[1]), o)
-            result = algorithm(db, option[0], appointments)
+                clear_slots(db)
 
-            if option[0] == "teacher":
-                values["TeachersFor" + option[0] + str(o)] = dict_to_str(analysis(result))
-                values["PupilsFor" + option[0] + str(o)] = dict_to_str(analysis(swap(db, result, "p")))
-            else:
-                values["TeachersFor" + option[0] + str(o)] = dict_to_str(analysis(swap(db, result, "t")))
-                values["PupilsFor" + option[0] + str(o)] = dict_to_str(analysis(result))
+                if sort == order_by_double:
+                    appointments = sort(db, option[0], get_appointments(db, option[1]), longest=o)
+
+                else:
+                    appointments = sort(get_appointments(db, option[1]), longest=o)
+
+                result = algorithm(db, option[0], appointments)
+
+                if option[0] == "teacher":
+                    values[txt_sort[i] + "TeachersFor" + option[0] + str(o)] = dict_to_str(analysis(result))
+                    values[txt_sort[i] + "PupilsFor" + option[0] + str(o)] = dict_to_str(analysis(swap(db, result, "p")))
+                else:
+                    values[txt_sort[i] + "TeachersFor" + option[0] + str(o)] = dict_to_str(analysis(swap(db, result, "t")))
+                    values[txt_sort[i] + "PupilsFor" + option[0] + str(o)] = dict_to_str(analysis(result))
     
     return values
 
 
 db = connection("pe")
 
-algos = [first_fit, skip_few, first_few, shake_first_fit, ordered, variable_first_fit]
+algos = [first_fit, skip_few, first_few, shake_first_fit, variable_first_fit]
 
 values = {}
 
-txt = ["first_fit", "skip_few", "first_few", "shake_first_fit", "ordered", "variable_first_fit"]
+txt = ["first_fit", "skip_few", "first_few", "shake_first_fit", "variable_first_fit"]
 
 for i, algo in enumerate(txt):
+    print("Generating data for:",algo)
     values[algo] = check(db, algos[i])
 
 with open("init_analysis.json", "w") as file:
