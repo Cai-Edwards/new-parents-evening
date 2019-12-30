@@ -1,8 +1,11 @@
+'''Perform analysis on a timetable'''
+
 import numpy
 import math
 import statistics
 
 def analysis(timetable):
+    '''Collate all the data calculated'''
 
     o = overall(timetable)
     s = score(o)
@@ -15,6 +18,7 @@ def analysis(timetable):
 
 
 def score(overall):
+    '''Generate a fitness value'''
 
     score = (overall['data_longest_gaps'][0]*-1 + overall['data_longest_gaps'][1]*-2 + overall['data_longest_gaps'][2]*-5 + 
     overall['data_difference'][0]*1 + overall['data_difference'][2]*5 +
@@ -24,6 +28,7 @@ def score(overall):
 
 
 def individual(time):
+    '''Calculate statistics based an a singular person'''
 
     earliest = time.index(next(slot for slot in time if slot != 0)) + 1
 
@@ -43,7 +48,6 @@ def individual(time):
     
     gaps.pop(0)
 
-
     smallest_gap = min(gaps)
     longest_gap = max(gaps)
     average_gap = statistics.mean(gaps)
@@ -61,6 +65,7 @@ def individual(time):
     }
 
 def bounds(timetable):
+    '''Calculate bounds for a timetable'''
 
     if all(v == 0 for v in timetable) == True:
         return {}
@@ -78,6 +83,7 @@ def bounds(timetable):
 
 
 def overall(timetable):
+    '''Calculate general statistics for a whole timetable'''
 
     if all(v == 0 for v in timetable) == True:
         return {}
