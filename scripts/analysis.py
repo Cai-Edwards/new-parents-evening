@@ -8,10 +8,11 @@ def analysis(timetable):
     '''Collate all the data calculated'''
 
     o = overall(timetable)
-    s = score(o)
     b = bounds(timetable)
 
     o.update(b)
+
+    s = score(o)
     o.update(s)
 
     return o
@@ -20,9 +21,10 @@ def analysis(timetable):
 def score(overall):
     '''Generate a fitness value'''
 
-    score = (overall['data_longest_gaps'][0]*-1 + overall['data_longest_gaps'][1]*-2 + overall['data_longest_gaps'][2]*-5 + 
-    overall['data_difference'][0]*1 + overall['data_difference'][2]*5 +
-    overall['data_earliest'][1]*-3 + overall['data_sd_gaps'][1]*-10)*-1
+    score = 1
+    score += sum(overall['all_difference']) - overall['minimum_slots']
+    score += overall['data_difference'][0] - overall['minimum_difference']
+    score += overall['data_difference'][1] - overall['minimum_difference']
 
     return {"score":score}
 
@@ -30,11 +32,13 @@ def score(overall):
 def individual(time):
     '''Calculate statistics based an a singular person'''
 
-    earliest = time.index(next(slot for slot in time if slot != 0)) + 1
+    data = {}
 
-    latest = len(time)
-    difference = latest - earliest
-    median = math.floor((difference + 1)/2)
+    data['earliest'] = [0, time.index(next(slot for slot in time if slot != 0)) + 1]
+
+    data['latest'] = [1, len(time)]
+    data['difference'] = [2, data['latest'][1] - data['earliest'][1] + 1]
+    data['median'] = [3, math.floor((data['difference'][1] + 1)/2) + data['earliest'][1]]
 
     current_gap = 0
     gaps = []
@@ -48,39 +52,33 @@ def individual(time):
     
     gaps.pop(0)
 
-    smallest_gap = min(gaps)
-    longest_gap = max(gaps)
-    average_gap = statistics.mean(gaps)
-    sd_gap = statistics.stdev(gaps)
+    data['smallest_gap'] = [4, min(gaps)]
+    data['longest_gap'] = [5, max(gaps)]
+    data['average_gap'] = [6, statistics.mean(gaps)]
+    data['sd_gap'] = [7, statistics.stdev(gaps)]
 
-    return {
-        "earliest":earliest,
-        "latest":latest,
-        "difference":difference,
-        "median":median,
-        "smallest_gap":smallest_gap, 
-        "longest_gap": longest_gap,
-        "average_gap": average_gap,
-        "sd_gap": sd_gap
-    }
-
+    return data
 def bounds(timetable):
-    '''Calculate bounds for a timetable'''
+    '''In an ideal scenario, what should values be'''
 
     if all(v == 0 for v in timetable) == True:
         return {}
 
     data = {}
-    data['minimum_length'] = 0
+    data['maximum_difference'] = 0
+    data['minimum_difference'] = 10000
+    data['minimum_slots'] = 0
 
     for p in timetable:
 
         person = [x for x in timetable[p] if x != 0]
 
-        if len(person) > data['minimum_length']: data['minimum_length'] = len(person)
+        if len(person) > data['maximum_difference']: data['maximum_difference'] = len(person) 
+        if len(person) < data['minimum_difference']: data['minimum_difference'] = len(person)  
+
+        data['minimum_slots'] += len(person) 
 
     return data
-
 
 def overall(timetable):
     '''Calculate general statistics for a whole timetable'''
@@ -97,23 +95,21 @@ def overall(timetable):
     average_gaps = []
     sd_gaps = []
 
-    names = ['data_earliest', 'data_latest', 'data_median', 'data_difference', 
+    names = ['data_earliest', 'data_latest', 'data_difference', 'data_median', 
             'data_smallest_gaps', 'data_longest_gaps', 'data_average_gaps',
             'data_sd_gaps']
     
-    all_names = ["all_earliest", "all_latest", "all_median", "all_difference",
+    all_names = ["all_earliest", "all_latest", "all_difference", "all_median", 
                 "smallest_gaps", "longest_gaps", "average_gaps", "sd_gaps"]
 
-    stats = [all_earliest, all_latest, all_median, all_difference,
+    stats = [all_earliest, all_latest, all_difference, all_median,
             smallest_gaps, longest_gaps, average_gaps, sd_gaps]
 
     for person in timetable:
         data = individual(timetable[person])
 
-        num = 0
         for d in data:
-            stats[num].append(data[d])
-            num += 1
+            stats[data[d][0]].append(data[d][1])
 
     values = {}
     values['slot_distribution'] = [len([timetable[x][i] for x in timetable if i < len(timetable[x])
