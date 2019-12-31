@@ -38,5 +38,30 @@ def order_by_length(d, longest=True):
     '''longest=False for ordering by shortest'''
     return {x:d[x] for x in sorted(d, key=lambda a: len(d[a]), reverse=longest)}
 
+def validate(timetable):
+
+    uniq = []
+
+    for person in timetable:
+        occurences = []
+
+        for app in timetable[person]:
+            if app in occurences and app != 0:
+                return False
+            else:
+                occurences.append(app)
     
+        uniq.extend([x for x in occurences if x not in uniq and x != 0])
+
+    for ids in uniq:
+
+        indexs = []
+
+        for person in timetable:
+            if ids in timetable[person]:
+                if timetable[person].index(ids) in indexs:
+                    return False
+                indexs.append(timetable[person].index(ids))
+
+    return True
 
