@@ -41,11 +41,11 @@ def check(db, algorithm):
 
 db = connection("pe")
 
-algos = [first_fit, skip_few, first_few, shake_first_fit, variable_first_fit]
+algos = [first_fit, skip_few, first_few, shake_first_fit, variable_first_fit, randomise]
 
 values = {}
 
-txt = ["first_fit", "skip_few", "first_few", "shake_first_fit", "variable_first_fit"]
+txt = ["first_fit", "skip_few", "first_few", "shake_first_fit", "variable_first_fit", "randomise"]
 
 for i, algo in enumerate(txt):
     print("Generating data for:",algo)
