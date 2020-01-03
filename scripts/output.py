@@ -31,11 +31,31 @@ def visualise(analysis):
             """.format(point, *analysis[point]))
         
         elif type(analysis[point]) is list and len(analysis[point]) > 4:
-            fig = plt.figure()
+            fig, ax = plt.subplots(2)
 
-            ax = fig.add_subplot()
-            ax.set_title(point)
-            ax.plot(analysis[point])
+            ax[0].set_title(point)
+            ax[1].set_title(point)
+
+            ax[0].scatter(range(len(analysis[point])), analysis[point])
+            ax[1].hist(analysis[point], 30)
+
+            m, c = lobf(analysis[point])
+            y = [(m * (x+1)) + c for x, t in enumerate(analysis[point])]
+
+            ax[0].plot(y)
     
     plt.show()
 
+def lobf(ydata):
+    '''Least square method'''
+
+    n = len(ydata)
+    xdata = [x for x in range(n)]
+
+    xbar = sum(xdata)/n
+    ybar = sum(ydata)/n
+
+    m = sum([int((xdata[i]-xbar) * (ydata[i]-ybar)) for i, t in enumerate(range(n))])
+    c = ybar - m * xbar
+
+    return m, c
