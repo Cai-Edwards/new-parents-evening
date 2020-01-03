@@ -65,5 +65,57 @@ def validate(timetable):
 
     return True
 
-def mutate(timetable):
-    pass
+def longest(timetable):
+    return max([len(timetable[x]) for x in timetable])
+
+def shortest(timetable):
+    return min([len(timetable[x]) for x in timetable])
+
+def expand(timetable):
+
+    longe = longest(timetable)
+
+    for person in timetable:
+        timetable[person].extend([0,]*(longe-len(timetable[person])))
+
+    return timetable
+
+def swap_any_columns(timetable):
+
+    timetable = expand(timetable)
+    longe = longest(timetable)
+
+    col1, col2 = random.sample(range(longe), 2)
+
+    for person in timetable:
+        timetable[person][col1], timetable[person][col2] = timetable[person][col2], timetable[person][col1]
+    
+    return timetable
+
+def swap_existing_columns(timetable):
+
+    timetable = expand(timetable)
+    short = shortest(timetable)
+
+    col1, col2 = random.sample(range(short), 2)
+
+    for person in timetable:
+        timetable[person][col1], timetable[person][col2] = timetable[person][col2], timetable[person][col1]
+    
+    return timetable
+
+def shift_left(timetable, number=1):
+
+    for _ in range(number):
+        for person in timetable:
+            for slot, x in enumerate(timetable[person]):
+                if slot-1 < 0:
+                    break
+                elif timetable[person][slot-1] != 0:
+                    break
+                elif x in [timetable[p][slot-1] for p in timetable if p != person]:
+                    break
+
+                timetable[person][slot-1] = x
+
+    return timetable
