@@ -3,7 +3,7 @@
 from database import *
 from output import *
 from list_manipulation import *
-from random import randint
+import random
 
 def first_fit(db, group, appointments, init=50, increase = 5):
     '''First fit algorithm. The opposite appointment data needs to be provided. Can be done to teachers or pupils'''
@@ -173,7 +173,7 @@ def variable_first_fit(db, group, appointments, init=50, increase = 5):
     for person in appointments:
         slots_taken = []
 
-        init = randint(0, len(appointments[person]))
+        init = random.randint(0, len(appointments[person]))
 
         for relationships in appointments[person]:
             slot = init
@@ -194,5 +194,32 @@ def variable_first_fit(db, group, appointments, init=50, increase = 5):
 
                 else:
                     slot += 1
+
+    return remove_excess(timetable)
+
+def randomise(db, group, appointments, init=110, increase=5):
+
+    timetable = {}
+    slots_taken = {}
+
+    for person in get_ids(db, group[0].lower()):
+        timetable[person] = [0 for x in range(init)] #Fills their ids with 0's
+
+    for person in appointments:
+        
+        slots_taken[person] = []
+
+        for relationships in appointments[person]:
+
+            ava_slots = [slot for slot, value in enumerate(timetable[relationships]) if value == 0 and slot not in slots_taken[person]]
+
+            while len(ava_slots) == 0:
+                timetable[relationships].extend([0,]*increase)
+                ava_slots = [slot for slot, value in enumerate(timetable[relationships]) if value == 0 and slot not in slots_taken[person]]
+
+            slot = random.choice(ava_slots)
+
+            slots_taken[person].append(slot)
+            timetable[relationships][slot] = person
 
     return remove_excess(timetable)
