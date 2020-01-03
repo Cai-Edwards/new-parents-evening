@@ -65,3 +65,5 @@ def validate(timetable):
 
     return True
 
+def mutate(timetable):
+    pass
