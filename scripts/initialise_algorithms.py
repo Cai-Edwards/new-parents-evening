@@ -2,6 +2,7 @@
 
 from database import *
 from output import *
+from dict_manipulation import find_available
 from list_manipulation import *
 import random
 
@@ -198,6 +199,7 @@ def variable_first_fit(db, group, appointments, init=50, increase = 5):
     return remove_excess(timetable)
 
 def randomise(db, group, appointments, init=110, increase=5):
+    '''Assigns each appoitments into a randomly available slot'''
 
     timetable = {}
     slots_taken = {}
@@ -221,5 +223,35 @@ def randomise(db, group, appointments, init=110, increase=5):
 
             slots_taken[person].append(slot)
             timetable[relationships][slot] = person
+
+    return remove_excess(timetable)
+
+def minimum_gaps(db, group, appointments, init=200):
+    '''Assumes infinite time'''
+
+    slots_taken = {}
+    timetable = {}
+    avaliable = {}
+
+    for person in get_ids(db, group[0].lower()):
+        timetable[person] = [0 for x in range(init)]
+        avaliable[person] = []
+
+    for person in appointments:
+
+        ava = find_available(appointments[person])
+
+        for i in ava:
+            temp = {}
+
+            if i[0] + i[1] > len(appointments[person]):
+
+                for other in appointments[person]:
+
+                    temp[other] = [x for x in slots_taken[other][i[0]:i[1]] if x == 0]
+
+                    if len(temp[other]) == 0:
+                        break
+
 
     return remove_excess(timetable)
