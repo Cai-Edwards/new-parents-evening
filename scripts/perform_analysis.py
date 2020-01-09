@@ -5,6 +5,7 @@ from dict_manipulation import *
 import json
 
 def check(db, algorithm):
+    '''Return all the data of all possibilities for a single algorithm'''
 
     first = (("teacher", "pupil"), ("pupil", "teacher"))
     sort_algos = (order_by_length, order_by_double)
