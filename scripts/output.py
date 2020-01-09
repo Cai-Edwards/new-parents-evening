@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 from list_manipulation import dictToList
+from scipy.stats import linregress #INPLEMENT BY SELF
 
 def write(timetable, file):
     '''Write a timetable to a csv file
@@ -17,6 +18,9 @@ def write(timetable, file):
     return "Done"
 
 def visualise(analysis):
+    '''Visualise analysis of a timetable.
+    Gives Minimum, Maximum, Mean and Standard deviation of each data point
+    Writes all values, and plots the values for each data point as a scatter plot and histogram'''
 
     for point in analysis:
 
@@ -39,7 +43,10 @@ def visualise(analysis):
             ax[0].scatter(range(len(analysis[point])), analysis[point])
             ax[1].hist(analysis[point], 30)
 
-            m, c = lobf(analysis[point])
+            m, c, r, p, s = linregress(range(len(analysis[point])), analysis[point])
+
+
+            #m, c = lobf(analysis[point])
             y = [(m * (x+1)) + c for x, t in enumerate(analysis[point])]
 
             ax[0].plot(y)
@@ -47,7 +54,7 @@ def visualise(analysis):
     plt.show()
 
 def lobf(ydata):
-    '''Least square method'''
+    '''Least square method - doesn't work'''
 
     n = len(ydata)
     xdata = [x for x in range(n)]
