@@ -6,12 +6,14 @@ def dict_shuffle(dictionary):
     random.shuffle(new)
     return dict(new)
 
-def dict_to_str(dictionary):
-    for x in dictionary:
-        dictionary[x] = str(dictionary[x])
-    return dictionary
+def dict_to_str(dictionary : str):
+    '''Converts all values in a dictionary to str'''
+
+    return {x:str(dictionary[x]) for x in dictionary}
 
 def order_by_double(db, group, appointments, longest=True):
+    '''Orders by the longest pupil and inside each pupil orders teachers by ammount of appointments
+    or vice versa'''
 
     schedule = {x:appointments[x] for x in sorted(appointments, key=lambda x: len(appointments[x]), reverse=longest)}
 
@@ -39,6 +41,7 @@ def order_by_length(d, longest=True):
     return {x:d[x] for x in sorted(d, key=lambda a: len(d[a]), reverse=longest)}
 
 def validate(timetable):
+    '''Checks if the timetable is valid'''
 
     uniq = []
 
@@ -65,6 +68,20 @@ def validate(timetable):
 
     return True
 
+def find_available(d):
+    '''Find available lengths of places.
+    
+    returns [[0, 2], [4, 10], [15, 20]] for example'''
+
+    available = [x for x, i in enumerate(d) if (x == 0 or x == len(d)-1 or d[x-1] != i) and (i ==0 or d[x-1] == 0)]
+
+    data = [[available[i], available[i+1]-1] for i in range(len(available)) if i % 2 == 0]
+
+    if data[-1][-1]+1 == len(d)-1:
+        data[-1][-1] = len(d)-1
+
+    return data
+    
 def longest(timetable):
     return max([len(timetable[x]) for x in timetable])
 
@@ -72,6 +89,7 @@ def shortest(timetable):
     return min([len(timetable[x]) for x in timetable])
 
 def expand(timetable):
+    '''Makes the length of everyone in the timetable equal to the longest'''
 
     longe = longest(timetable)
 
@@ -81,6 +99,7 @@ def expand(timetable):
     return timetable
 
 def swap_any_columns(timetable):
+    '''Swap any columns up to the maximum there'''
 
     timetable = expand(timetable)
     longe = longest(timetable)
@@ -93,6 +112,7 @@ def swap_any_columns(timetable):
     return timetable
 
 def swap_existing_columns(timetable):
+    '''Swap any columns up to the minimum there'''
 
     timetable = expand(timetable)
     short = shortest(timetable)
@@ -105,6 +125,7 @@ def swap_existing_columns(timetable):
     return timetable
 
 def shift_left(timetable, number=1):
+    '''Move all slots left if possible number times'''
 
     for _ in range(number):
         for person in timetable:
