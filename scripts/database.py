@@ -93,25 +93,6 @@ def get_ids(db, group):
 
     return [x[0] for x in cursor.fetchall()] #Returns it as a list.
 
-def upload_analysis(db, analysis):
-
-    clear_slots(db)
-    
-    cursor = db.cursor()
-
-    for person in range(len(analysis["order"])):
-
-        q1 = "INSERT INTO analysis (pid, earliest, latest, difference, average_gap, min_gap, max_gap) VALUES ({}, {}, {}, {}, {}, {}, {})".format(analysis["order"][person],
-        analysis["all_earliest"][person], analysis["all_latest"][person],
-        analysis["all_difference"][person], analysis["all_average_gap"][person],
-        analysis["all_min_gap"][person], analysis["all_max_gap"][person])
-
-        cursor.execute(q1)
-
-    db.commit()
-
-    return "Done"
-
 def remove_subject(db, subject_name):
     '''Removes all instances of a classID with a subject=subject_name in relationships
     
@@ -141,6 +122,7 @@ def remove_general(db):
     return "Done"
 
 def update_slots(db, timetable, group):
+    '''Inserts slots into the database'''
 
     cursor = db.cursor()
     cursor2 = db.cursor()
