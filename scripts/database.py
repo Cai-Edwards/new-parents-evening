@@ -53,8 +53,24 @@ def clear_analysis(db):
 
     return "Complete"
 
-def get_timetable(db, group):
-    '''Gets the appointment timetable TODO''' 
+def get_timetable(db, group, id):
+    '''Gets the appointment timetable for a person'''
+    cursor = db.cursor()
+
+    q = ("select r.pid, r.tid, r.slot, k.subjectcode, k.subjectname " +
+    "from relationships r " +
+    "inner join data.setsubject s on r.classid=s.classid " +
+    "inner join data.subjectname k on s.subject=k.subject " +
+    "where r.{}={};")
+
+    if group[0].lower() == "p":
+        cursor.execute(q.format("pid", str(id)))
+    elif group[0].lower() == "t":
+        cursor.execute(q.format("tid", str(id)))
+    else:
+        return "Invalid input"
+    
+    return cursor.fetchall()
 
 def get_appointments(db, group):
     '''Gets all the appointments each pupil/teacher needs to go to.'''
