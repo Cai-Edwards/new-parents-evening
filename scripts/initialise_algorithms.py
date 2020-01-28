@@ -231,11 +231,9 @@ def minimum_gaps(db, group, appointments, init=200):
 
     slots_taken = {}
     timetable = {}
-    avaliable = {}
 
     for person in get_ids(db, group[0].lower()):
         timetable[person] = [0 for x in range(init)]
-        avaliable[person] = []
 
     for person in appointments:
 
@@ -244,14 +242,15 @@ def minimum_gaps(db, group, appointments, init=200):
         for i in ava:
             temp = {}
 
-            if i[0] + i[1] > len(appointments[person]):
+            if i[1] - i[0] > len(appointments[person]):
 
-                for other in appointments[person]:
+                for k, other in enumerate(appointments[person]):
 
-                    temp[other] = [x for x in slots_taken[other][i[0]:i[1]] if x == 0]
+                    if slots_taken[other][i[0]+k] != 0:
+                        
+                        while found := False:
+                            pass
 
-                    if len(temp[other]) == 0:
-                        break
 
 
     return remove_excess(timetable)
