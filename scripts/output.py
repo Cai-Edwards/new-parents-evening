@@ -37,32 +37,26 @@ def visualise(analysis):
         elif type(analysis[point]) is list and len(analysis[point]) > 4:
             fig, ax = plt.subplots(2)
 
+            y = analysis[point]
+            x = list(range(len(analysis[point])))
+            
+            ybar = sum(y)/len(y)
+            xbar = sum(x)/len(x)
+
             ax[0].set_title(point)
             ax[1].set_title(point)
 
-            ax[0].scatter(range(len(analysis[point])), analysis[point])
+            ax[0].scatter(x, y)
             ax[1].hist(analysis[point], 30)
 
-            m, c, r, p, s = linregress(range(len(analysis[point])), analysis[point])
+            sxy = sum((xv-xbar)*(yv - ybar) for xv, yv in zip(x, y))
+            sxx = sum((xv-xbar)**2 for xv in x)
+            syy = sum((yv-ybar)**2 for yv in y)
 
+            b = sxy/sxx
+            c = ybar - b * xbar
 
-            #m, c = lobf(analysis[point])
-            y = [(m * (x+1)) + c for x, t in enumerate(analysis[point])]
+            ax[0].plot([0, max(x)], [c, b*max(x)+c])
 
-            ax[0].plot(y)
     
     plt.show()
-
-def lobf(ydata):
-    '''Least square method - doesn't work'''
-
-    n = len(ydata)
-    xdata = [x for x in range(n)]
-
-    xbar = sum(xdata)/n
-    ybar = sum(ydata)/n
-
-    m = sum([int((xdata[i]-xbar) * (ydata[i]-ybar)) for i, t in enumerate(range(n))])
-    c = ybar - m * xbar
-
-    return m, c
