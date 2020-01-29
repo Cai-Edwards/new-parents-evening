@@ -83,10 +83,10 @@ def find_available(d):
     return data
     
 def longest(timetable):
-    return max([len(timetable[x]) for x in timetable])
+    return max((len(timetable[x]) for x in timetable))
 
 def shortest(timetable):
-    return min([len(timetable[x]) for x in timetable])
+    return min((len(timetable[x]) for x in timetable))
 
 def expand(timetable):
     '''Makes the length of everyone in the timetable equal to the longest'''
