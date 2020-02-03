@@ -1,5 +1,5 @@
 from analysis import analysis
-from dict_manipulation import *
+from dict_manipulation import shift_left, swap_any_columns, swap_existing_columns
 from random import random
 import numpy as np
 

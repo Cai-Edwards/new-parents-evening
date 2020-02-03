@@ -1,10 +1,9 @@
 '''Initialisation algorithms'''
 
-from database import *
-from output import *
+from database import get_ids
 from dict_manipulation import find_available
-from list_manipulation import *
-import random
+from list_manipulation import remove_excess
+from random import randint, choice
 
 def first_fit(db, group, appointments, init=50, increase = 5):
     '''First fit algorithm. The opposite appointment data needs to be provided. Can be done to teachers or pupils'''
@@ -174,7 +173,7 @@ def variable_first_fit(db, group, appointments, init=50, increase = 5):
     for person in appointments:
         slots_taken = []
 
-        init = random.randint(0, len(appointments[person]))
+        init = randint(0, len(appointments[person]))
 
         for relationships in appointments[person]:
             slot = init
@@ -219,7 +218,7 @@ def randomise(db, group, appointments, init=110, increase=5):
                 timetable[relationships].extend([0,]*increase)
                 ava_slots = [slot for slot, value in enumerate(timetable[relationships]) if value == 0 and slot not in slots_taken[person]]
 
-            slot = random.choice(ava_slots)
+            slot = choice(ava_slots)
 
             slots_taken[person].append(slot)
             timetable[relationships][slot] = person
