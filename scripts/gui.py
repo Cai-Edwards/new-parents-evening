@@ -6,7 +6,7 @@ from analysis import analysis
 from output import write, visualise
 from list_manipulation import swap
 import os.path as path
-from os import curdir, mkdir
+from os import curdir, mkdir, chdir
 from datetime import datetime
 import matplotlib.pyplot as plt
 
@@ -64,7 +64,8 @@ def run_program():
         analyse = analysis(data)
 
     date = datetime.today().strftime('%Y%m%d%H%M%S')
-    
+
+    chdir("..")
     filepath = path.abspath(curdir)
 
     pat = path.normpath(filepath + "/output/" + date)

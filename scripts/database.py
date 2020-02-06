@@ -163,4 +163,33 @@ def update_slots(db, timetable, group):
 
     return "Done"
 
+def real_data(db, filepath):
+
+    cursor = db.cursor()
+
+    q = "Insert ignore into relationships (slot, pid, tid) values ({}, {}, {})"
+
+    with open(filepath, "r", encoding='utf-8-sig') as file:
+        for line in file.readlines():
+            v = line.rstrip().split(",")
+            cursor.execute(q.format(v[0], v[1], v[2]))
+
+    db.commit()
+
+def convert_db_dictionary(db):
+
+    timetable = {}
+
+    cursor = db.cursor()
+
+    q = "select tid, group_concat(pid) from relationships group by tid;"
+
+    cursor.execute(q)
+    data = cursor.fetchall()
+
+    for i in data:
+        timetable[i[0]] = list(map(int, i[1].split(",")))
+
+    return timetable
+
 print("Loaded database.py")
