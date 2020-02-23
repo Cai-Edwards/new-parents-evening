@@ -129,12 +129,12 @@ base_person.set("Teacher")
 base_person_choices = {"Teacher", "Pupil"}
 
 order = StringVar()
-order.set("None")
+order.set("Shortest")
 
 orders = {"None", "Longest", "Shortest", "Double shortest", "Double longest"}
 
 write_data = StringVar()
-write_data.set("None")
+write_data.set("Both")
 
 write_options = {"None", "Both", "Pupils", "Teachers"}
 

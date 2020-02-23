@@ -30,7 +30,7 @@ def visualise(analysis, save = False, filepath=''):
             if not(save):
                 print("""
                 {}:
-                Mninimum: {}
+                Minimum: {}
                 Maximum: {}
                 Mean: {}
                 Standard Deviation: {}
@@ -40,7 +40,7 @@ def visualise(analysis, save = False, filepath=''):
                 with open(os.path.normpath(filepath + "/data.txt"), "a") as file:
                     file.write("""
                 {}:
-                Mninimum: {}
+                Minimum: {}
                 Maximum: {}
                 Mean: {}
                 Standard Deviation: {}
