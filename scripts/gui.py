@@ -1,10 +1,9 @@
 from tkinter import Tk, Frame, StringVar, IntVar, OptionMenu, Checkbutton, Button, Label
 from initialise_algorithms import first_fit, skip_few, first_few, shake_first_fit, variable_first_fit, randomise
-from dict_manipulation import order_by_length, order_by_double
+from manipulation import order_by_length, order_by_double, swap
 from database import get_appointments, connection, clear_relationships, data_to_pe, remove_general
 from analysis import analysis
 from output import write, visualise
-from list_manipulation import swap
 import os.path as path
 from os import curdir, mkdir, chdir
 from datetime import datetime
@@ -65,19 +64,19 @@ def run_program():
 
     date = datetime.today().strftime('%Y%m%d%H%M%S')
 
-    chdir("..")
-    filepath = path.abspath(curdir)
+    mkdir("output")
+    chdir("output")
 
-    pat = path.normpath(filepath + "/output/" + date)
+    pat = path.normpath(f"{path.abspath(curdir)}/{str(date)}")
 
     mkdir(pat)
 
-    print("Writing data to " + pat)
+    print(f"Writing data to {pat}")
     wr = write_data.get()
     if wr == "Both":
-        write(data, path.normpath(pat + "/" + base + ".csv"))
+        write(data, path.normpath(f"{pat}/{base}.csv"))
         data = swap(db, data, p)
-        write(data, path.normpath(pat + "/" + p + ".csv"))
+        write(data, path.normpath(f"{pat}/{p}.csv"))
         
     elif wr == "Pupils":
         if base == "Pupil":
@@ -85,7 +84,7 @@ def run_program():
         else:
             data = swap(db, data, p)
             
-        write(data, path.normpath(pat + "/pupil.csv"))
+        write(data, path.normpath(f"{pat}/pupil.csv"))
 
     elif wr == "Teachers":
         if base == "Teacher":
@@ -93,7 +92,7 @@ def run_program():
         else:
             data = swap(db, data, p)
             
-        write(data, path.normpath(pat + "/teacher.csv"))
+        write(data, path.normpath(f"{pat}/teacher.csv"))
         
     if write_stats.get() == 1:
         visualise(analyse, save = True, filepath = pat)
