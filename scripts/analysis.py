@@ -12,23 +12,7 @@ def analysis(timetable):
 
     o.update(b)
 
-    s = score(o)
-    o.update(s)
-
     return o
-
-
-def score(overall):
-    '''Generate a fitness value. lower is better'''
-
-    score = 1
-    score += sum(overall['all_difference']) - overall['minimum_slots']
-    score += overall['data_difference'][0] - overall['minimum_difference']
-    score += overall['data_difference'][1] - overall['minimum_difference']
-    score += overall['data_longest_gaps'][0]*5 + overall['data_longest_gaps'][0]*5
-
-    return {"score":score}
-
 
 def individual(time):
     '''Calculate statistics based an a singular person'''
@@ -59,6 +43,7 @@ def individual(time):
     data['sd_gap'] = [7, statistics.stdev(gaps)]
 
     return data
+
 def bounds(timetable):
     '''In an ideal scenario, what should values be'''
 
