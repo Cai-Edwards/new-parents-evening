@@ -1,7 +1,6 @@
 import csv
 import matplotlib.pyplot as plt
-from list_manipulation import dictToList
-from dict_manipulation import longest
+from manipulation import dictToList, longest
 from random import randint
 import os
 

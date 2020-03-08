@@ -1,8 +1,7 @@
 '''Initialisation algorithms'''
 
 from database import get_ids
-from dict_manipulation import find_available
-from list_manipulation import remove_excess
+from manipulation import find_available, remove_excess
 from random import randint, choice
 
 def first_fit(db, group, appointments, init=50, increase = 5):

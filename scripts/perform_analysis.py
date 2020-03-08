@@ -1,8 +1,7 @@
 from initialise_algorithms import first_few, first_fit, shake_first_fit, skip_few, randomise, variable_first_fit
 from analysis import analysis
 from database import connection, clear_slots, get_appointments
-from dict_manipulation import dict_to_str, order_by_double, order_by_length
-from list_manipulation import swap
+from manipulation import dict_to_str, order_by_double, order_by_length, swap
 import json
 
 def check(db, algorithm):
